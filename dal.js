@@ -1,52 +1,79 @@
-const mongoose = require('mongoose');
-const { Message, User } = require('./model/Schemas');
+const mongoose = require("mongoose");
+const { Message, User } = require("./model/Schemas");
 
-function getMessageById(messageId){
-    return Message.findOne({'_id': messageId}).catch(function(err){
-      console.log(err)
-    })
+mongoose.connect("mongodb://localhost:27017/passnotedb");
+
+function getMessageById(messageId) {
+	return Message.findOne({ _id: messageId }).catch(function(err) {
+		console.log(err);
+	});
 }
 
-function getAllMessages (messages) {
-    return Message.find(messages)
+function sendMessage(title, body, data, sender, recipient) {
+	Message.create(req.body);
 }
 
-function sendMessage (title, body, data, sender, recipient){
-    Message.create(req.body)
+function findIncomingMessages(userId) {
+	return Message.find({ recipient: userId })
+		.populate("sender")
+		.catch(function(err) {
+			console.log(err);
+		});
 }
 
-function findIncomingMessages (incoming){
-    return Message.find({'incoming': incoming}).catch(function(err){
-        console.log(err)
-    })
-}
-
-function findOutgoingMessages (outgoing){
-    return Message.find({'outgoing': outgoing}).catch(function(err){
-        console.log(err)
-    })
+function findOutgoingMessages(userId) {
+	return Message.find({ outgoing: userId })
+		.populate("recipient")
+		.catch(function(err) {
+			console.log(err);
+		});
 }
 
 // not entirely sure about this guy here
-function addContact(username, password, avatar, name, contacts, incoming, outgoing){
-    User.create({username: username, password: password, avatar: avatar, name: name, contacts: contacts, incoming: incoming, outgoing: outgoing})
-}
-// end
-
-function addUser(username, password, avatar, name, contacts, incoming, outgoing){
-    User.create({username: username, password: password, avatar: avatar, name: name, contacts: contacts, incoming: incoming, outgoing: outgoing})
-}
-
-function findContactByUsername(username){
-    User.findOne({'_id': username}).catch(function(err){
-        console.log(err)
-    })
+function addContact(contactUserName, userId) {
+	findContactByUsername(conactUserName).then(contact => {
+		User.findOne({ _id: userId }).then(user => {
+			user.contacts.push(contact._id);
+			user.save();
+		});
+	});
 }
 
-function deleteMessage(messageId){
-    Messages.deleteOne({'_id': messageId}).catch(function(err){
-        console.log(err)
-    })
+function addUser(newUser) {
+	const hash = User.generateHash(newUser.password);
+	const user = new User({
+		username: newUser.username,
+		password: hash,
+		avatar: newUser.avatar,
+		name: newUser.name
+	});
+	user.save();
 }
 
-module.exports = { findIncomingMessages: findIncomingMessages, findOutgoingMessages: findOutgoingMessages, addUser: addUser, addContact: addContact, findContactByUsername: findContactByUsername, sendMessage: sendMessage, deleteMessage: deleteMessage, getMessageById: getMessageById, getAllMessages: getAllMessages}
+function getAllContacts(userId) {
+	return User.find({ contacts }).populate();
+}
+
+function findContactByUsername(username) {
+	User.findOne({ username: username }).catch(function(err) {
+		console.log(err);
+	});
+}
+
+function deleteMessage(messageId) {
+	Messages.deleteOne({ _id: messageId }).catch(function(err) {
+		console.log(err);
+	});
+}
+
+module.exports = {
+	findIncomingMessages,
+	findOutgoingMessages,
+	addUser,
+	addContact,
+	findContactByUsername,
+	sendMessage,
+	deleteMessage,
+	getMessageById,
+	getAllMessages
+};
