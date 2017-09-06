@@ -22,7 +22,7 @@ app.use(
 
 function valdiateLogin (req, res, next) {
   getUserByUserName(req.body.username).then((user) => {
-    user.validPassword(req.body.password, user.password, (err, isMatch) {
+    user.validPassword(req.body.password, user.password, (err, isMatch) => {
       if(err) {
         req.session.message = "Invalid Username or Password."
         res.redirect("/login", req.session.message)
@@ -62,8 +62,6 @@ app.get('compose', function(req, res){
 app.post('/compose', function(req, res){
     res.redirect('/inbox')
 })
-
-
 
 app.set("port", 3000);
 
