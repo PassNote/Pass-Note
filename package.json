@@ -1,0 +1,30 @@
+{
+  "name": "pass-note",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dal.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stephen-boynton/Pass-Note.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stephen-boynton/Pass-Note/issues"
+  },
+  "homepage": "https://github.com/stephen-boynton/Pass-Note#readme",
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "body-parser": "^1.17.2",
+    "dotenv": "^4.0.0",
+    "express": "^4.15.4",
+    "express-session": "^1.15.5",
+    "moment": "^2.18.1",
+    "mongoose": "^4.11.10",
+    "mustache-express": "^1.2.5"
+  }
+}
