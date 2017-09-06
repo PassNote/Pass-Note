@@ -39,12 +39,36 @@ function valdiateLogin (req, res, next) {
   })
 }
 
-app.post("/login", validateLogin, (req, res) => {
-	res.redirect("/inbox");
+app.get('/', function (req, res){
+    res.redirect('/login')
 });
+
+app.post("/login", validateLogin, (req, res) => {
+    res.redirect("/inbox");
+});
+
+app.get ('signup', function(req, res){
+    res.render('signup')
+})
+
+app.post('/signup', function(req, res){
+    res.redirect('/inbox')
+})
+
+app.get('compose', function(req, res){
+    res.render('compose')
+})
+
+app.post('/compose', function(req, res){
+    res.redirect('/inbox')
+})
+
+
 
 app.set("port", 3000);
 
 app.listen(app.get("port"), () => {
 	console.log("Your app has started, sir.");
 });
+
+

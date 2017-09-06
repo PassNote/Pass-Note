@@ -28,6 +28,7 @@ function findOutgoingMessages (outgoing){
 }
 
 // not entirely sure about this guy here
+
 function addContact(username, password, avatar, name, contacts, incoming, outgoing){
     User.create({username: username, password: password, avatar: avatar, name: name, contacts: contacts, incoming: incoming, outgoing: outgoing})
 }
