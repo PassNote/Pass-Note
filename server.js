@@ -70,5 +70,3 @@ app.set("port", 3000);
 app.listen(app.get("port"), () => {
 	console.log("Your app has started, sir.");
 });
-
-
