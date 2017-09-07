@@ -81,7 +81,11 @@ app.post("/login", validateLogin, (req, res) => {
 	res.redirect("/inbox");
 });
 
-app.get("/signup", (req, res) => {
+app.get("/inbox", function(req, res){
+	res.render("inbox")
+})
+
+app.get("/signup", function(req, res) {
 	res.render("signup");
 });
 
