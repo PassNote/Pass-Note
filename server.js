@@ -5,12 +5,23 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const mustacheExpress = require("mustache-express");
 const mongoose = require("mongoose");
-const { User, Message } = require("./models/Schema");
+const { User, Message } = require("./model/Schemas");
+const {
+	findIncomingMessages,
+	findOutgoingMessages,
+	addUser,
+	addContact,
+	findContactByUsername,
+	sendMessage,
+	deleteMessage,
+	getMessageById
+} = require("./dal");
 
 app.engine("mustache", mustacheExpress());
 app.set("view engine", "mustache");
 app.set("views", __dirname + "/views");
-
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(
 	session({
@@ -20,48 +31,53 @@ app.use(
 	})
 );
 
-function valdiateLogin (req, res, next) {
-  getUserByUserName(req.body.username).then((user) => {
-    user.validPassword(req.body.password, user.password, (err, isMatch) => {
-      if(err) {
-        req.session.message = "Invalid Username or Password."
-        res.redirect("/login", req.session.message)
-      } else if (isMatch) {
-        req.session.user = {
-          username: user.username,
-          name: user.name,
-          avatar: user.avatar,
-          userId: user._id
-        };
-        next();
-      }
-    })
-  })
+function validateLogin(req, res, next) {
+	getUserByUserName(req.body.username).then(user => {
+		user.validPassword(req.body.password, user.password, (err, isMatch) => {
+			if (err) {
+				req.session.message = "Invalid Username or Password.";
+				res.redirect("/login", req.session.message);
+			} else if (isMatch) {
+				req.session.user = {
+					username: user.username,
+					name: user.name,
+					avatar: user.avatar,
+					userId: user._id
+				};
+				next();
+			}
+		});
+	});
 }
 
-app.get('/', function (req, res){
-    res.redirect('/login')
+app.get("/", function(req, res) {
+	res.redirect("/login");
+});
+
+app.get("/login", (req, res) => {
+	res.render("login");
 });
 
 app.post("/login", validateLogin, (req, res) => {
-    res.redirect("/inbox");
+	res.redirect("/inbox");
 });
 
-app.get ('signup', function(req, res){
-    res.render('signup')
-})
+app.get("/signup", function(req, res) {
+	res.render("signup");
+});
 
-app.post('/signup', function(req, res){
-    res.redirect('/inbox')
-})
+app.post("/signup", function(req, res) {
+	addUser(req.body);
+	res.redirect("/inbox");
+});
 
-app.get('compose', function(req, res){
-    res.render('compose')
-})
+app.get("/compose", function(req, res) {
+	res.render("compose");
+});
 
-app.post('/compose', function(req, res){
-    res.redirect('/inbox')
-})
+app.post("/compose", function(req, res) {
+	res.redirect("/inbox");
+});
 
 app.set("port", 3000);
 
