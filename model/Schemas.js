@@ -11,16 +11,14 @@ const UserSchema = new mongoose.Schema({
 	},
 	name: { type: String },
 	contacts: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-	incoming: [{ type: mongoose.Schema.Types.ObjectId, ref: "Message" }],
-	outgoing: [{ type: mongoose.Schema.Types.ObjectId, ref: "Message" }]
+	messages: [{ type: mongoose.Schema.Types.ObjectId, ref: "Message" }]
 });
 
 const MessageSchema = new mongoose.Schema({
 	title: { type: String },
 	body: { type: String },
-	date: { type: Date, default: moment().format() },
-	sender: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-	recipient: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
+	date: { type: Date, default: moment().add(10, "minutes") },
+	users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
 });
 
 UserSchema.statics.generateHash = function(password) {

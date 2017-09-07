@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const session = require("express-session");
+const moment = require("moment");
 const mustacheExpress = require("mustache-express");
 const mongoose = require("mongoose");
 const { User, Message } = require("./model/Schemas");
@@ -32,7 +33,7 @@ app.use(
 );
 
 function validateLogin(req, res, next) {
-	getUserByUserName(req.body.username).then(user => {
+	findContactByUsername(req.body.username).then(user => {
 		user.validPassword(req.body.password, user.password, (err, isMatch) => {
 			if (err) {
 				req.session.message = "Invalid Username or Password.";
@@ -50,7 +51,25 @@ function validateLogin(req, res, next) {
 	});
 }
 
-app.get("/", function(req, res) {
+function timeCheck(req, res, next) {
+  if(moment() > req.body.date) {
+    deleteMessage();
+    req.session.message = "This message has expried."
+    res.redirect("/inbox", req.session.message)
+  } else {
+    next();
+  }
+}
+
+function passMessage (req, res, next) {
+  const newMembeer = req.body.newMember;
+  getMessageById(req.body.id).then((message) => {
+    message.users.push(newMember);
+    findContactByUsername()
+  })
+}
+
+app.get("/", (req, res) => {
 	res.redirect("/login");
 });
 
@@ -70,18 +89,24 @@ app.get("/signup", function(req, res) {
 	res.render("signup");
 });
 
-app.post("/signup", function(req, res) {
+app.post("/signup", (req, res) => {
 	addUser(req.body);
 	res.redirect("/inbox");
 });
 
-app.get("/compose", function(req, res) {
+app.get("/compose", (req, res) => {
 	res.render("compose");
 });
 
-app.post("/compose", function(req, res) {
+app.post("/compose", (req, res) => {
+
 	res.redirect("/inbox");
 });
+
+app.post("/pass-add", timeCheck, ((req, res) => {
+  res.redirect("/inbox")
+})
+
 
 app.set("port", 3000);
 
