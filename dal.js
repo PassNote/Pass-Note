@@ -69,8 +69,7 @@ function deleteMessage(messageId) {
 }
 
 module.exports = {
-	findIncomingMessages,
-	findOutgoingMessages,
+	findMessages,
 	addUser,
 	addContact,
 	findContactByUsername,
