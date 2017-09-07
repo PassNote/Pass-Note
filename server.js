@@ -68,7 +68,8 @@ function timeCheck(req, res, next) {
 
 function userNameCheck(req, res, next) {
 	User.find({ username: req.body.username }).then(user => {
-		if (user) {
+		console.log(user[0]);
+		if (user[0]) {
 			req.session.alert = "This username is taken.";
 			res.redirect("/signup");
 		} else {
