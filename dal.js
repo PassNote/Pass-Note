@@ -22,17 +22,9 @@ function sendMessage(newMessage, senderId) {
 	});
 }
 
-function findIncomingMessages(userId) {
-	return Message.find({ recipient: userId })
-		.populate("sender")
-		.catch(function(err) {
-			console.log(err);
-		});
-}
-
-function findOutgoingMessages(userId) {
-	return Message.find({ outgoing: userId })
-		.populate("recipient")
+function findMessages(userId) {
+	return Message.find({ users: userId })
+		.populate("users")
 		.catch(function(err) {
 			console.log(err);
 		});
@@ -77,8 +69,7 @@ function deleteMessage(messageId) {
 }
 
 module.exports = {
-	findIncomingMessages,
-	findOutgoingMessages,
+	findMessages,
 	addUser,
 	addContact,
 	findContactByUsername,

@@ -9,7 +9,6 @@ const mongoose = require("mongoose");
 const { User, Message } = require("./model/Schemas");
 const {
 	findIncomingMessages,
-	findOutgoingMessages,
 	addUser,
 	addContact,
 	findContactByUsername,
@@ -36,8 +35,8 @@ function validateLogin(req, res, next) {
 	findContactByUsername(req.body.username).then(user => {
 		user.validPassword(req.body.password, user.password, (err, isMatch) => {
 			if (err) {
-				req.session.message = "Invalid Username or Password.";
-				res.redirect("/login", req.session.message);
+				req.session.alert = "Invalid Username or Password.";
+				res.redirect("/login", req.session.alert);
 			} else if (isMatch) {
 				req.session.user = {
 					username: user.username,
@@ -52,61 +51,87 @@ function validateLogin(req, res, next) {
 }
 
 function timeCheck(req, res, next) {
-  if(moment() > req.body.date) {
-    deleteMessage();
-    req.session.message = "This message has expried."
-    res.redirect("/inbox", req.session.message)
-  } else {
-    next();
-  }
+	if (moment() > req.body.date) {
+		deleteMessage();
+		req.session.alert = "This message has expried.";
+		res.redirect("/inbox", req.session.alert);
+	} else {
+		next();
+	}
 }
 
-function passMessage (req, res, next) {
-  const newMembeer = req.body.newMember;
-  getMessageById(req.body.id).then((message) => {
-    message.users.push(newMember);
-    findContactByUsername()
-  })
+function userNameCheck(req, res, next) {
+	User.find({ username: req.body.username }).then(user => {
+		if (user) {
+			req.session.alert = "This username is taken.";
+			res.redirect("/signup");
+		} else {
+			next();
+		}
+	});
+}
+
+// this function takes the old message that has been updated and passes it
+// into the new users array, and adds that new user to the message array.
+// should be used if a new person is added to the note being passed
+function passMessage(req, res, next) {
+	if (req.body.newUser) {
+		const newMembeer = req.body.newMember;
+		getMessageById(req.body.id).then(message => {
+			findContactByUsername(newMember).then(newUser => {
+				newUser.messages.push(message._id);
+				message.users.push(newUser._id);
+			});
+		});
+	} else {
+		next();
+	}
 }
 
 app.get("/", (req, res) => {
+	if (req.session.user) res.redirect("/inbox");
 	res.redirect("/login");
 });
 
 app.get("/login", (req, res) => {
-	res.render("login");
+	res.render("login", { alert: req.session.alert, user: req.session.user });
 });
 
 app.post("/login", validateLogin, (req, res) => {
 	res.redirect("/inbox");
 });
 
-app.get("/inbox", function(req, res){
-	res.render("inbox")
-})
-
-app.get("/signup", function(req, res) {
-	res.render("signup");
+app.get("/inbox", function(req, res) {
+	if (!req.session.user) res.redirect("/login");
+	findMessages(req.session.user.id).then(messages => {
+		res.render("inbox", { alert: req.session.alert, user: req.session.user });
+	});
 });
 
-app.post("/signup", (req, res) => {
+app.get("/signup", function(req, res) {
+	res.render("signup", {
+		alert: req.session.alert,
+		user: req.session.user
+	});
+});
+
+app.post("/signup", userNameCheck, (req, res) => {
 	addUser(req.body);
 	res.redirect("/inbox");
 });
 
 app.get("/compose", (req, res) => {
+	if (!req.session.user) res.redirect("/login");
 	res.render("compose");
 });
 
 app.post("/compose", (req, res) => {
-
 	res.redirect("/inbox");
 });
 
 app.post("/pass-add", timeCheck, (req, res) => {
-  res.redirect("/inbox")
-})
-
+	res.redirect("/inbox");
+});
 
 app.set("port", 3000);
 
