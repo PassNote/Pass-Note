@@ -1,8 +1,8 @@
-{{_header}}
-  <form class="" action="/Compose" method="post">
+{{>_header}}
+  <form class="" action="/compose" method="POST">
     <input type="text" name="recipient" value="" placeholder="to">
     <input type="text" name="title" value="" placeholder="Subject">
-    <textarea name="body" rows="8" cols="80"></textarea>
+    <textarea name="body" rows="8" cols="80" placeholder="Message..."></textarea>
     <button type="submit" name="button">Pass Note</button>
   </form>
-{{_footer}}
+{{>_footer}}
