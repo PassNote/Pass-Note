@@ -6,11 +6,22 @@ const session = require("express-session");
 const mustacheExpress = require("mustache-express");
 const mongoose = require("mongoose");
 const { User, Message } = require("./model/Schemas");
+const {
+	findIncomingMessages,
+	findOutgoingMessages,
+	addUser,
+	addContact,
+	findContactByUsername,
+	sendMessage,
+	deleteMessage,
+	getMessageById
+} = require("./dal");
 
 app.engine("mustache", mustacheExpress());
 app.set("view engine", "mustache");
 app.set("views", __dirname + "/views");
-
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(
 	session({
@@ -56,6 +67,7 @@ app.get("/signup", function(req, res) {
 });
 
 app.post("/signup", function(req, res) {
+	addUser(req.body);
 	res.redirect("/inbox");
 });
 

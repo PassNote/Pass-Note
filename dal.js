@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { Message, User } = require("./model/Schemas");
+mongoose.Promise = require("bluebird");
 
 mongoose.connect("mongodb://localhost:27017/passnotedb");
 
@@ -48,6 +49,7 @@ function addContact(contactUserName, userId) {
 }
 
 function addUser(newUser) {
+	console.log(newUser);
 	const hash = User.generateHash(newUser.password);
 	const user = new User({
 		username: newUser.username,
@@ -82,6 +84,5 @@ module.exports = {
 	findContactByUsername,
 	sendMessage,
 	deleteMessage,
-	getMessageById,
-	getAllMessages
+	getMessageById
 };
