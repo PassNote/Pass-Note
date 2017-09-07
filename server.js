@@ -8,7 +8,7 @@ const mustacheExpress = require("mustache-express");
 const mongoose = require("mongoose");
 const { User, Message } = require("./model/Schemas");
 const {
-	findIncomingMessages,
+	findMessages,
 	addUser,
 	addContact,
 	findContactByUsername,
@@ -33,20 +33,26 @@ app.use(
 
 function validateLogin(req, res, next) {
 	findContactByUsername(req.body.username).then(user => {
-		user.validPassword(req.body.password, user.password, (err, isMatch) => {
-			if (err) {
-				req.session.alert = "Invalid Username or Password.";
-				res.redirect("/login", req.session.alert);
-			} else if (isMatch) {
-				req.session.user = {
-					username: user.username,
-					name: user.name,
-					avatar: user.avatar,
-					userId: user._id
-				};
-				next();
+		console.log(user);
+		user[0].validPassword(
+			req.body.password,
+			user[0].password,
+			(err, isMatch) => {
+				if (err) {
+					console.log(err);
+					req.session.alert = "Invalid Username or Password.";
+					res.redirect("/login", req.session.alert);
+				} else if (isMatch) {
+					req.session.user = {
+						username: user.username,
+						name: user.name,
+						avatar: user.avatar,
+						userId: user._id
+					};
+					next();
+				}
 			}
-		});
+		);
 	});
 }
 
