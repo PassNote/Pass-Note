@@ -9,9 +9,8 @@
     <header>
       <nav>
         <img src="Public/Images/passnoteLogo.png" alt="logo for Pass Note">
-        <a href="/Login"></a>
-        <a href="/Signup"></a>
-        <a href="Logout"></a>
-
+        {{^user}}<a href="/Login"></a>
+        <a href="/Signup"></a>{{/user}}
+        {{#user}}<a href="Logout"></a>{{/user}}
       </nav>
     </header>
