@@ -112,7 +112,7 @@ app.post("/compose", (req, res) => {
 	res.redirect("/inbox");
 });
 
-app.post("/pass-add", timeCheck, ((req, res) => {
+app.post("/pass-add", timeCheck, (req, res) => {
   res.redirect("/inbox")
 })
 
