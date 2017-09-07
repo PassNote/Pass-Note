@@ -2,11 +2,15 @@
 {{#alert}}
 <h3>{{alert}}</h3>
 {{/alert}}
-  <form class="" action="/signup" method="POST">
+  <form class="signup" action="/signup" method="POST">
     <input type="text" name="name" value="" placeholder="Name" required autofocus>
+    <br>
     <input type="text" name="username" value="" placeholder="Username" required>
+    <br>
     <input type="password" name="password" value="" placeholder="Password" required>
+    <br>
     <input type="text" name="avatar" value="" placeholder="Image URL">
+    <br>
     <button type="submit" name="button">Submit</button>
   </form>
 {{>_footer}}
