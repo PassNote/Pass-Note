@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/master.css">
+    <link rel="stylesheet" href="/styles.css">
     <title>Pass Note</title>
   </head>
   <body>
     <header>
       <nav>
-        <img src="/images/passnoteLogo.png" alt="logo for Pass Note">
+        <img class= "logo" src="/images/passnoteLogo.png" alt="logo for Pass Note">
         {{^user}}<a href="/login"></a>
         <a href="/Signup"></a>{{/user}}
         {{#user}}<a href="logout"></a>{{/user}}

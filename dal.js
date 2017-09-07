@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { Message, User } = require("./model/Schemas");
 mongoose.Promise = require("bluebird");
 
-mongoose.connect("mongodb://localhost:27017/passnotedb");
+mongoose.connect("mongodb://localhost:27017/passnotedb", { useMongoClient: true });
 
 function getMessageById(messageId) {
 	return Message.findOne({ _id: messageId }).catch(function(err) {
