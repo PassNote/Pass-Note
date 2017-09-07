@@ -61,12 +61,21 @@ function timeCheck(req, res, next) {
   }
 }
 
+// this function takes the old message that has been updated and passes it
+// into the new users array, and adds that new user to the message array.
+// should be used if a new person is added to the note being passed
 function passMessage (req, res, next) {
+  if(req.body.newUser) {
   const newMembeer = req.body.newMember;
   getMessageById(req.body.id).then((message) => {
-    message.users.push(newMember);
-    findContactByUsername()
+    findContactByUsername(newMember).then(newUser) => {
+      newUser.messages.push(message._id);
+      message.users.push(newUser._id);
+    }
   })
+} else {
+
+}
 }
 
 app.get("/", (req, res) => {
