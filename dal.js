@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { Message, User } = require("./model/Schemas");
 mongoose.Promise = require("bluebird");
 
-mongoose.connect("mongodb://localhost:27017/passnotedb");
+mongoose.connect("mongodb://localhost:27017/passnotedb", { useMongoClient: true });
 
 function getMessageById(messageId) {
 	return Message.findOne({ _id: messageId }).catch(function(err) {
@@ -22,17 +22,9 @@ function sendMessage(newMessage, senderId) {
 	});
 }
 
-function findIncomingMessages(userId) {
-	return Message.find({ recipient: userId })
-		.populate("sender")
-		.catch(function(err) {
-			console.log(err);
-		});
-}
-
-function findOutgoingMessages(userId) {
-	return Message.find({ outgoing: userId })
-		.populate("recipient")
+function findMessages(userId) {
+	return Message.find({ users: userId })
+		.populate("users")
 		.catch(function(err) {
 			console.log(err);
 		});
@@ -77,8 +69,7 @@ function deleteMessage(messageId) {
 }
 
 module.exports = {
-	findIncomingMessages,
-	findOutgoingMessages,
+	findMessages,
 	addUser,
 	addContact,
 	findContactByUsername,

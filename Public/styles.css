@@ -1,7 +1,13 @@
 body {
   margin: auto;
+  /*background-color: red;*/
 }
 
 .login-container {
   text-align: center;
+}
+
+
+img {
+
 }
