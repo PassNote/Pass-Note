@@ -11,10 +11,9 @@
   <body>
     <header>
       <nav>
-        <img src="Public/Images/passnoteLogo.png" alt="logo for Pass Note">
-        <a href="/Login"></a>
-        <a href="/Signup"></a>
-        <a href="Logout"></a>
-
+        <img src="/images/passnoteLogo.png" alt="logo for Pass Note">
+        {{^user}}<a href="/login"></a>
+        <a href="/Signup"></a>{{/user}}
+        {{#user}}<a href="logout"></a>{{/user}}
       </nav>
     </header>
