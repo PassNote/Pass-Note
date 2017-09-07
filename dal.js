@@ -57,13 +57,11 @@ function getAllContacts(userId) {
 }
 
 function findContactByUsername(username) {
-	User.findOne({ username: username }).catch(function(err) {
-		console.log(err);
-	});
+	return User.find({ username: username });
 }
 
 function deleteMessage(messageId) {
-	Messages.deleteOne({ _id: messageId }).catch(function(err) {
+	return Messages.deleteOne({ _id: messageId }).catch(function(err) {
 		console.log(err);
 	});
 }
