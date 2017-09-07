@@ -1,5 +1,5 @@
 {{>_header}}
-    <div class = "topRow">
+    <div class = "top-section">
         <img href="{{avatar}}">
         <form class = "searchMessages" action = "#" method = "POST">
         <input type = "text" placeholder= "Search your notes!">
@@ -7,10 +7,12 @@
         </form>
         <a href = "/logout"><button>Logout</button></a>
     </div>
-    <div class = "bottomRow">
+    <div class = "bottom-left">
         <a href = "/contacts"><button>View all Contacts!</button></a>
         <br>
         <a href = "/compose"><button>Compose a new Message!</button></a>
+    <div class="">
+
         <div class = "messages">
             {{^messages}}
             <h2>No new notes at this time! Hit compose to start a new one.</h2>
@@ -19,6 +21,6 @@
             {{>_message}}
             {{/messages}}
             <p>Copyright SEC Services 2017</p>
-
+          </div>
     </div>
 {{>_footer}}
