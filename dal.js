@@ -9,8 +9,16 @@ function getMessageById(messageId) {
 	});
 }
 
-function sendMessage(title, body, data, sender, recipient) {
-	Message.create(req.body);
+function sendMessage(newMessage, senderId) {
+	findContactByUsername(newMessage.recipient).then(recipient => {
+		const message = new Message({
+			title: newMessage.title,
+			body: newMessage.body,
+			sender: senderId,
+			recipient: recipient._id
+		});
+		message.save();
+	});
 }
 
 function findIncomingMessages(userId) {
