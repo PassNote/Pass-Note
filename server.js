@@ -108,10 +108,15 @@ app.post("/login", validateLogin, (req, res) => {
 	res.redirect("/inbox");
 });
 
-app.get("/inbox", function(req, res) {
+app.get("/inbox", timeCheck, (req, res) => {
+	console.log(req.session.user);
 	if (!req.session.user) res.redirect("/login");
 	findMessages(req.session.user.id).then(messages => {
-		res.render("inbox", { alert: req.session.alert, user: req.session.user });
+		res.render("inbox", {
+			alert: req.session.alert,
+			user: req.session.user,
+			messages: messages
+		});
 	});
 });
 
@@ -133,11 +138,17 @@ app.get("/compose", (req, res) => {
 });
 
 app.post("/compose", (req, res) => {
+	console.log(req.body);
+	sendMessage(req.body, req.session.user.id);
 	res.redirect("/inbox");
 });
 
 app.post("/pass-add", timeCheck, (req, res) => {
 	res.redirect("/inbox");
+});
+
+app.get("/singleContact", (req, res) => {
+	res.redirect("/singleContact");
 });
 
 app.set("port", 3000);
