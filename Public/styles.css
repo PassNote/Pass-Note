@@ -21,3 +21,10 @@ justify-content: center;
 margin: auto;
 padding-bottom: 20px;
 }
+
+.signup {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 50%;
+}
