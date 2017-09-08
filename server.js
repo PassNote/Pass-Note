@@ -44,10 +44,10 @@ function validateLogin(req, res, next) {
 					res.redirect("/login", req.session.alert);
 				} else if (isMatch) {
 					req.session.user = {
-						username: user.username,
-						name: user.name,
-						avatar: user.avatar,
-						userId: user._id
+						username: user[0].username,
+						name: user[0].name,
+						avatar: user[0].avatar,
+						userId: user[0]._id
 					};
 					next();
 				}
@@ -109,13 +109,13 @@ app.post("/login", validateLogin, (req, res) => {
 });
 
 app.get("/inbox", timeCheck, (req, res) => {
-	console.log(req.session.user);
 	if (!req.session.user) res.redirect("/login");
-	findMessages(req.session.user.id).then(messages => {
+	findMessages(req.session.user.userId).then(messages => {
+		console.log("This is the array, supposedly " + messages);
 		res.render("inbox", {
 			alert: req.session.alert,
 			user: req.session.user,
-			messages: messages
+			messages: messages.reverse()
 		});
 	});
 });
@@ -138,8 +138,8 @@ app.get("/compose", (req, res) => {
 });
 
 app.post("/compose", (req, res) => {
-	console.log(req.body);
-	sendMessage(req.body, req.session.user.id);
+	console.log("This is req.session " + req.session.user);
+	sendMessage(req.body, req.session.user.userId);
 	res.redirect("/inbox");
 });
 
