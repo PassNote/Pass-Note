@@ -112,6 +112,7 @@ app.get("/inbox", timeCheck, (req, res) => {
 	console.log(req.session.user);
 	if (!req.session.user) res.redirect("/login");
 	findMessages(req.session.user.id).then(messages => {
+		console.log(messages);
 		res.render("inbox", {
 			alert: req.session.alert,
 			user: req.session.user,

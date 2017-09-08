@@ -12,14 +12,22 @@ function getMessageById(messageId) {
 	});
 }
 
+function findUserById(userId) {
+	return User.find({ _id: userId });
+}
+
 function sendMessage(newMessage, senderId) {
 	findContactByUsername(newMessage.user).then(recipient => {
 		const message = new Message({
 			title: newMessage.title,
 			body: newMessage.body,
-			ussers: [senderId, recipient._id]
+			users: [senderId, recipient._id]
 		});
-		message.save();
+		message.save((err, result) => {
+			recipient.messages.push(result._id);
+			recipient.save();
+			findUserById(senderId).then(user);
+		});
 	});
 }
 
