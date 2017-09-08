@@ -148,6 +148,10 @@ app.post("/pass-add", timeCheck, (req, res) => {
 	res.redirect("/inbox");
 });
 
+app.get("/singleContact", (req, res) => {
+	res.redirect("/singleContact");
+});
+
 app.set("port", 3000);
 
 app.listen(app.get("port"), () => {
