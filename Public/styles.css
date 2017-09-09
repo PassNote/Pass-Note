@@ -37,15 +37,28 @@ padding-bottom: 20px;
   justify-content: center;
   padding-top: 20px;
 }
-
-.bottom-left {
+.bottom-section {
+  display: flex;
+  flex-direction: row;
+}
+.right {
   display: flex;
   flex-direction: column;
-  width: 255;
   width: 25%;
   padding-top: 50px;
+  margin: auto;
 }
 
+.left {
+  display: flex;
+  width: calc(74%-10px);
+  flex-direction: column;
+  margin-top: 50px;
+  margin-left: 20px;
+  border-right: 2px solid lightgrey;
+  padding-right: 31px;
+}
+}
 .hidden {
   display: none;
 }
