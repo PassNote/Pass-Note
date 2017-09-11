@@ -1,0 +1,14 @@
+<div class="message">
+  <div class="user-list">
+    {{#users}}
+      <h6 class="names">{{username}} </h6>{{/users}}
+  </div>
+  <h4>Subject: {{title}}</h4>
+  <div class="message-body">
+
+    {{#body}}
+      <h5>{{author.name}}:</h5>
+      <p>{{message}}</p>
+    {{/body}}
+  </div>
+</div>

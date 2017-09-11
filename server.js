@@ -33,7 +33,6 @@ app.use(
 
 function validateLogin(req, res, next) {
 	findContactByUsername(req.body.username).then(user => {
-		console.log(user);
 		user[0].validPassword(
 			req.body.password,
 			user[0].password,
@@ -68,7 +67,6 @@ function timeCheck(req, res, next) {
 
 function userNameCheck(req, res, next) {
 	User.find({ username: req.body.username }).then(user => {
-		console.log(user[0]);
 		if (user[0]) {
 			req.session.alert = "This username is taken.";
 			res.redirect("/signup");
@@ -81,16 +79,26 @@ function userNameCheck(req, res, next) {
 // this function takes the old message that has been updated and passes it
 // into the new users array, and adds that new user to the message array.
 // should be used if a new person is added to the note being passed
-function passMessage(req, res, next) {
+async function passMessage(req, res, next) {
+	const message = await getMessageById(req.body.id);
 	if (req.body.newUser) {
-		const newMembeer = req.body.newMember;
-		getMessageById(req.body.id).then(message => {
-			findContactByUsername(newMember).then(newUser => {
-				newUser.messages.push(message._id);
-				message.users.push(newUser._id);
-			});
+		const newUser = await findContactByUsername(req.body.newUser);
+		newUser.messages.push(message._id);
+		newUser.save();
+		message.users.push(newUser._id);
+		message.body.push({
+			author: req.session.user.userId,
+			message: req.body.body
 		});
+		message.save();
+		next();
 	} else {
+		message.body.push({
+			author: req.session.user.userId,
+			message: req.body.body
+		});
+		console.log(message);
+		message.save();
 		next();
 	}
 }
@@ -111,13 +119,24 @@ app.post("/login", validateLogin, (req, res) => {
 app.get("/inbox", timeCheck, (req, res) => {
 	if (!req.session.user) res.redirect("/login");
 	findMessages(req.session.user.userId).then(messages => {
-		console.log("This is the array, supposedly " + messages);
 		res.render("inbox", {
 			alert: req.session.alert,
 			user: req.session.user,
 			messages: messages.reverse()
 		});
 	});
+});
+
+app.get("/inbox/:id", async function(req, res) {
+	if (req.params.id === "server.js");
+	console.log("Why am I running more than once?");
+	const id = await req.params.id;
+	const message = await getMessageById(id);
+	res.render("pass-add", { message: message, user: req.session.user });
+});
+
+app.post("/inbox/pass", passMessage, (req, res) => {
+	res.redirect("/inbox");
 });
 
 app.get("/signup", function(req, res) {
@@ -137,13 +156,8 @@ app.get("/compose", (req, res) => {
 	res.render("compose");
 });
 
-app.post("/compose", (req, res) => {
-	console.log("This is req.session " + req.session.user);
-	sendMessage(req.body, req.session.user.userId);
-	res.redirect("/inbox");
-});
-
-app.post("/pass-add", timeCheck, (req, res) => {
+app.post("/compose", async function(req, res) {
+	await sendMessage(req.body, req.session.user.userId);
 	res.redirect("/inbox");
 });
 

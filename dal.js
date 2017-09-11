@@ -7,9 +7,13 @@ mongoose.connect("mongodb://localhost:27017/passnotedb", {
 });
 
 function getMessageById(messageId) {
-	return Message.findOne({ _id: messageId }).catch(function(err) {
-		console.log(err);
-	});
+	console.log(messageId);
+	return Message.findOne({ _id: messageId })
+		.populate("users", "username")
+		.populate("body.author", "name")
+		.catch(function(err) {
+			// console.log(err);
+		});
 }
 
 function findUserById(userId) {
@@ -21,7 +25,10 @@ function sendMessage(newMessage, senderId) {
 	findContactByUsername(newMessage.user).then(recipient => {
 		const message = new Message({
 			title: newMessage.title,
-			body: newMessage.body,
+			body: {
+				author: senderId,
+				message: newMessage.body
+			},
 			users: [senderId, recipient[0]._id]
 		});
 		message.save((err, result) => {
@@ -40,6 +47,7 @@ function findMessages(userId) {
 	console.log("User id: " + userId);
 	return Message.find({ users: userId })
 		.populate("users", "username")
+		.populate("body.author", "name")
 		.catch(function(err) {
 			console.log(err);
 		});

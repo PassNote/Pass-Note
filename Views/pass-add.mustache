@@ -1,8 +1,11 @@
 {{>_header}}
-{{>_message}}
-    <form class="" action="/pass-add" method="POST">
-        <input type="text" name="newUser" value="" placeholder="to">
-        <textarea name="body" rows="8" cols="80" placeholder="Message..."></textarea>
+{{#message}}
+{{>_add-message}}
+{{/message}}
+    <form class="pass-add" action="/inbox/pass" method="POST">
+        <input type="text" name="id" value="{{message._id}}" class="hidden" readonly>
+        <input type="text" name="newUser" value="" placeholder="Add Others...">
+        <textarea name="body" rows="8" cols="80" placeholder="Add message..."></textarea>
         <button type="submit" name="button">Pass Note</button>
     </form>
 {{>_footer}}
