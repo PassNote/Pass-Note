@@ -14,7 +14,8 @@ const {
 	findContactByUsername,
 	sendMessage,
 	deleteMessage,
-	getMessageById
+	getMessageById,
+	getTimeRemaining
 } = require("./dal");
 
 app.engine("mustache", mustacheExpress());
@@ -55,14 +56,16 @@ function validateLogin(req, res, next) {
 	});
 }
 
-function timeCheck(req, res, next) {
-	if (moment() > req.body.date) {
-		deleteMessage();
-		req.session.alert = "This message has expried.";
-		res.redirect("/inbox", req.session.alert);
-	} else {
-		next();
-	}
+async function timeCheck(req, res, next) {
+	const messages = await Message.find();
+	messages.forEach((elm, ind, arr) => {
+		if (moment().isAfter(elm.date)) {
+			console.log("Deleting message.");
+			console.log(elm._id);
+			deleteMessage(elm._id);
+		}
+	});
+	next();
 }
 
 function userNameCheck(req, res, next) {
@@ -98,7 +101,7 @@ async function passMessage(req, res, next) {
 			message: req.body.body
 		});
 		console.log(message);
-		message.save();
+		await message.save();
 		next();
 	}
 }
@@ -119,20 +122,29 @@ app.post("/login", validateLogin, (req, res) => {
 app.get("/inbox", timeCheck, (req, res) => {
 	if (!req.session.user) res.redirect("/login");
 	findMessages(req.session.user.userId).then(messages => {
+		let timeArray;
+		if (messages) {
+			timeArray = getTimeRemaining(messages);
+		}
 		res.render("inbox", {
 			alert: req.session.alert,
 			user: req.session.user,
-			messages: messages.reverse()
+			messages: messages.reverse(),
+			time: timeArray.reverse()
 		});
 	});
 });
 
-app.get("/inbox/:id", async function(req, res) {
-	if (req.params.id === "server.js");
-	console.log("Why am I running more than once?");
+app.get("/inbox/:id", timeCheck, async function(req, res) {
+	if (!req.session.user) res.redirect("/login");
 	const id = await req.params.id;
 	const message = await getMessageById(id);
-	res.render("pass-add", { message: message, user: req.session.user });
+	const timeArray = await getTimeRemaining(message);
+	res.render("pass-add", {
+		message: message,
+		user: req.session.user,
+		time: timeArray
+	});
 });
 
 app.post("/inbox/pass", passMessage, (req, res) => {
@@ -156,13 +168,18 @@ app.get("/compose", (req, res) => {
 	res.render("compose");
 });
 
-app.post("/compose", async function(req, res) {
+app.post("/compose", timeCheck, async function(req, res) {
 	await sendMessage(req.body, req.session.user.userId);
 	res.redirect("/inbox");
 });
 
 app.get("/singleContact", (req, res) => {
 	res.redirect("/singleContact");
+});
+
+app.get("/logout", (req, res) => {
+	req.session.destroy();
+	res.redirect("/login");
 });
 
 app.set("port", 3000);

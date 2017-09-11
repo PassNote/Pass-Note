@@ -1,102 +1,120 @@
 body {
-  margin: auto;
-  /*background-color: red;*/
+	margin: auto;
+	/*background-color: red;*/
+}
+
+button {
+	background-color: rgba(0, 0, 0, 0);
+	border: 2px solid #19596a;
+	transition: background-color 0.3s, color 0.3s;
+}
+
+button:hover {
+	background-color: #77ce6f;
+	color: white;
 }
 
 .wrapper {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
+.compose {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
 
 .login-container {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
 .login {
-  display: flex;
-  flex-direction: column;
-  width: 30%;
-  align-items: center;
-  margin: 10px;
+	display: flex;
+	flex-direction: column;
+	width: 30%;
+	align-items: center;
+	margin: 10px;
 }
 
-.login input, .login button {
-  margin-top: 5px;
+.login input,
+.login button,
+.compose input,
+.compose button {
+	margin-top: 5px;
 }
-
 
 img.logo {
-max-width: 400px;
-display: flex;
-justify-content: center;
-margin: auto;
-padding-bottom: 20px;
+	max-width: 400px;
+	display: flex;
+	justify-content: center;
+	margin: auto;
+	padding-bottom: 20px;
 }
 
 .signup {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  width: 50%;
-  margin: auto;
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	width: 50%;
+	margin: auto;
 }
 
 .message {
-  display: flex;
-  flex-direction: column;
-  margin: 10px;
-  padding: 10px;
-  border: 2px solid black;
-  width: 80%;
+	display: flex;
+	flex-direction: column;
+	margin: 10px;
+	padding: 10px;
+	border: 2px solid black;
+	width: 80%;
 }
 
 .names {
-  margin-right: 5px;
+	margin-right: 5px;
 }
 
 .user-list {
-  display: flex;
+	display: flex;
 }
 
 .top-section {
-  display: flex;
-  width: 100%;
-  margin: auto;
-  justify-content: center;
-  padding-top: 20px;
+	display: flex;
+	width: 100%;
+	margin: auto;
+	justify-content: center;
+	padding-top: 20px;
 }
 .bottom-section {
-  display: flex;
-  flex-direction: row;
+	display: flex;
+	flex-direction: row;
 }
 .right {
-  display: flex;
-  flex-direction: column;
-  width: 80%;
-  padding-top: 50px;
+	display: flex;
+	flex-direction: column;
+	width: 80%;
+	padding-top: 50px;
 }
 
 .left {
-  display: flex;
-  width: calc(74%-10px);
-  flex-direction: column;
-  margin-top: 50px;
-  margin-left: 20px;
-  border-right: 2px solid lightgrey;
-  padding-right: 31px;
+	display: flex;
+	width: calc(74%-10px);
+	flex-direction: column;
+	margin-top: 50px;
+	margin-left: 20px;
+	border-right: 2px solid lightgrey;
+	padding-right: 31px;
 }
-}
+
 .hidden {
-  display: none;
+	display: none;
 }
 
 .pass-add {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }

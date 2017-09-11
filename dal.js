@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const { Message, User } = require("./model/Schemas");
+const moment = require("moment");
+
 mongoose.Promise = require("bluebird");
 
 mongoose.connect("mongodb://localhost:27017/passnotedb", {
@@ -7,11 +9,11 @@ mongoose.connect("mongodb://localhost:27017/passnotedb", {
 });
 
 function getMessageById(messageId) {
-	console.log(messageId);
 	return Message.findOne({ _id: messageId })
 		.populate("users", "username")
 		.populate("body.author", "name")
-		.catch(function(err) {
+		.catch(function(err, result) {
+			console.log(result);
 			// console.log(err);
 		});
 }
@@ -21,7 +23,6 @@ function findUserById(userId) {
 }
 
 function sendMessage(newMessage, senderId) {
-	console.log(newMessage, senderId);
 	findContactByUsername(newMessage.user).then(recipient => {
 		const message = new Message({
 			title: newMessage.title,
@@ -32,7 +33,6 @@ function sendMessage(newMessage, senderId) {
 			users: [senderId, recipient[0]._id]
 		});
 		message.save((err, result) => {
-			console.log("This is the result: " + result);
 			recipient[0].messages.push(result._id);
 			recipient[0].save();
 			findUserById(senderId).then(user => {
@@ -44,7 +44,6 @@ function sendMessage(newMessage, senderId) {
 }
 
 function findMessages(userId) {
-	console.log("User id: " + userId);
 	return Message.find({ users: userId })
 		.populate("users", "username")
 		.populate("body.author", "name")
@@ -83,9 +82,25 @@ function findContactByUsername(username) {
 }
 
 function deleteMessage(messageId) {
-	return Messages.deleteOne({ _id: messageId }).catch(function(err) {
+	return Message.deleteOne({ _id: messageId }).catch(function(err) {
 		console.log(err);
 	});
+}
+
+function getTimeRemaining(messageArray) {
+	const timeArray = [];
+	console.log("This is message array: " + messageArray);
+	if (Array.isArray(messageArray)) {
+		messageArray.forEach((elm, ind, arr) => {
+			timeArray.push(moment().diff(elm.date, "minutes"));
+		});
+	} else {
+		timeArray.push(moment().diff(messageArray.date, "minutes"));
+	}
+	timeArray.forEach((elm, ind, arr) => {
+		timeArray[ind] = elm * -1;
+	});
+	return timeArray;
 }
 
 module.exports = {
@@ -95,5 +110,6 @@ module.exports = {
 	findContactByUsername,
 	sendMessage,
 	deleteMessage,
-	getMessageById
+	getMessageById,
+	getTimeRemaining
 };
