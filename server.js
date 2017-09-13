@@ -14,7 +14,8 @@ const {
 	findContactByUsername,
 	sendMessage,
 	deleteMessage,
-	getMessageById
+	getMessageById,
+	getTimeRemaining
 } = require("./dal");
 
 app.engine("mustache", mustacheExpress());
@@ -33,7 +34,6 @@ app.use(
 
 function validateLogin(req, res, next) {
 	findContactByUsername(req.body.username).then(user => {
-		console.log(user);
 		user[0].validPassword(
 			req.body.password,
 			user[0].password,
@@ -56,19 +56,20 @@ function validateLogin(req, res, next) {
 	});
 }
 
-function timeCheck(req, res, next) {
-	if (moment() > req.body.date) {
-		deleteMessage();
-		req.session.alert = "This message has expried.";
-		res.redirect("/inbox", req.session.alert);
-	} else {
-		next();
-	}
+async function timeCheck(req, res, next) {
+	const messages = await Message.find();
+	messages.forEach((elm, ind, arr) => {
+		if (moment().isAfter(elm.date)) {
+			console.log("Deleting message.");
+			console.log(elm._id);
+			deleteMessage(elm._id);
+		}
+	});
+	next();
 }
 
 function userNameCheck(req, res, next) {
 	User.find({ username: req.body.username }).then(user => {
-		console.log(user[0]);
 		if (user[0]) {
 			req.session.alert = "This username is taken.";
 			res.redirect("/signup");
@@ -81,16 +82,26 @@ function userNameCheck(req, res, next) {
 // this function takes the old message that has been updated and passes it
 // into the new users array, and adds that new user to the message array.
 // should be used if a new person is added to the note being passed
-function passMessage(req, res, next) {
+async function passMessage(req, res, next) {
+	const message = await getMessageById(req.body.id);
 	if (req.body.newUser) {
-		const newMembeer = req.body.newMember;
-		getMessageById(req.body.id).then(message => {
-			findContactByUsername(newMember).then(newUser => {
-				newUser.messages.push(message._id);
-				message.users.push(newUser._id);
-			});
+		const newUser = await findContactByUsername(req.body.newUser);
+		newUser.messages.push(message._id);
+		newUser.save();
+		message.users.push(newUser._id);
+		message.body.push({
+			author: req.session.user.userId,
+			message: req.body.body
 		});
+		message.save();
+		next();
 	} else {
+		message.body.push({
+			author: req.session.user.userId,
+			message: req.body.body
+		});
+		console.log(message);
+		await message.save();
 		next();
 	}
 }
@@ -111,13 +122,33 @@ app.post("/login", validateLogin, (req, res) => {
 app.get("/inbox", timeCheck, (req, res) => {
 	if (!req.session.user) res.redirect("/login");
 	findMessages(req.session.user.userId).then(messages => {
-		console.log("This is the array, supposedly " + messages);
+		let timeArray;
+		if (messages) {
+			timeArray = getTimeRemaining(messages);
+		}
 		res.render("inbox", {
 			alert: req.session.alert,
 			user: req.session.user,
-			messages: messages.reverse()
+			messages: messages.reverse(),
+			time: timeArray.reverse()
 		});
 	});
+});
+
+app.get("/inbox/:id", timeCheck, async function(req, res) {
+	if (!req.session.user) res.redirect("/login");
+	const id = await req.params.id;
+	const message = await getMessageById(id);
+	const timeArray = await getTimeRemaining(message);
+	res.render("pass-add", {
+		message: message,
+		user: req.session.user,
+		time: timeArray
+	});
+});
+
+app.post("/inbox/pass", passMessage, (req, res) => {
+	res.redirect("/inbox");
 });
 
 app.get("/signup", function(req, res) {
@@ -137,18 +168,18 @@ app.get("/compose", (req, res) => {
 	res.render("compose");
 });
 
-app.post("/compose", (req, res) => {
-	console.log("This is req.session " + req.session.user);
-	sendMessage(req.body, req.session.user.userId);
-	res.redirect("/inbox");
-});
-
-app.post("/pass-add", timeCheck, (req, res) => {
+app.post("/compose", timeCheck, async function(req, res) {
+	await sendMessage(req.body, req.session.user.userId);
 	res.redirect("/inbox");
 });
 
 app.get("/singleContact", (req, res) => {
 	res.redirect("/singleContact");
+});
+
+app.get("/logout", (req, res) => {
+	req.session.destroy();
+	res.redirect("/login");
 });
 
 app.set("port", 3000);

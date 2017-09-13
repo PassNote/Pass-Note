@@ -16,7 +16,12 @@ const UserSchema = new mongoose.Schema({
 
 const MessageSchema = new mongoose.Schema({
 	title: { type: String },
-	body: [{ type: String }],
+	body: [
+		{
+			author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+			message: { type: String }
+		}
+	],
 	date: { type: Date, default: moment().add(10, "minutes") },
 	users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
 });
