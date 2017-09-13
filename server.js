@@ -182,6 +182,21 @@ app.get("/logout", (req, res) => {
 	res.redirect("/login");
 });
 
+app.get("/contacts", (req, res) => {
+	if (!req.session.user) res.redirect("/login");
+	res.render('singleContact')	
+})
+
+app.get("/addcontact", (req, res) => {
+	if (!req.session.user) res.redirect("/login");
+	res.render('addcontact')	
+})
+
+app.post("addcontact", (req, res) => {
+	addContact(req.body)
+	res.redirect('./singlecontact')
+})
+
 app.set("port", 3000);
 
 app.listen(app.get("port"), () => {
