@@ -12,20 +12,34 @@ function getMessageById(messageId) {
 	});
 }
 
+function findUserById(userId) {
+	return User.find({ _id: userId });
+}
+
 function sendMessage(newMessage, senderId) {
+	console.log(newMessage, senderId);
 	findContactByUsername(newMessage.user).then(recipient => {
 		const message = new Message({
 			title: newMessage.title,
 			body: newMessage.body,
-			ussers: [senderId, recipient._id]
+			users: [senderId, recipient[0]._id]
 		});
-		message.save();
+		message.save((err, result) => {
+			console.log("This is the result: " + result);
+			recipient[0].messages.push(result._id);
+			recipient[0].save();
+			findUserById(senderId).then(user => {
+				user[0].messages.push(result._id);
+				user[0].save();
+			});
+		});
 	});
 }
 
 function findMessages(userId) {
+	console.log("User id: " + userId);
 	return Message.find({ users: userId })
-		.populate("users")
+		.populate("users", "username")
 		.catch(function(err) {
 			console.log(err);
 		});
@@ -42,7 +56,6 @@ function addContact(contactUserName, userId) {
 }
 
 function addUser(newUser) {
-	console.log(newUser);
 	const hash = User.generateHash(newUser.password);
 	const user = new User({
 		username: newUser.username,
