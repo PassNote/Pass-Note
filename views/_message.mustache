@@ -1,6 +1,10 @@
 <div class="message">
-  {{#users}} <h4>{{username}}</h4>{{/users}}
-  <h2>Subject: {{title}}</h2>
-  <p>{{body}}</p>
-  <h6>{{time}}</h6>
+  <div class="user-list">{{#users}} <h6 class="names">{{username}} </h6>{{/users}} {{#time}}<h6>Time remaining: {{.}} minutes</h6>{{/time}}</div>
+  <h4>Subject: {{title}}</h4>
+  <div class="message-body">
+  {{#body}}
+  <h5>{{author.name}}:</h5>
+  <p>{{message}}</p>{{/body}}
+</div>
+    <a href="/inbox/{{_id}}">Pass Message</a>
 </div>
