@@ -119,3 +119,20 @@ img.logo {
 	flex-direction: column;
 	align-items: center;
 }
+
+.message {
+	margin: auto;
+}
+
+.add-others {
+	margin-bottom: 20px;
+	margin-top: 20px;
+}
+
+.copyright {
+	margin-left: 73px;
+}
+
+.pass-message {
+	margin-top: 20px;
+}
