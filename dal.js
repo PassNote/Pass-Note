@@ -53,11 +53,13 @@ function findMessages(userId) {
 }
 
 // not entirely sure about this guy here
+
 function addContact(contactUserName, userId) {
-	findContactByUsername(conactUserName).then(contact => {
+	findContactByUsername(contactUserName).then(contact => {
 		User.findOne({ _id: userId }).then(user => {
 			user.contacts.push(contact._id);
 			user.save();
+			console.log(user.contacts)
 		});
 	});
 }
@@ -74,7 +76,7 @@ function addUser(newUser) {
 }
 
 function getAllContacts(userId) {
-	return User.find({ contacts }).populate();
+	return User.find({ userId }).populate();
 }
 
 function findContactByUsername(username) {
@@ -111,5 +113,6 @@ module.exports = {
 	sendMessage,
 	deleteMessage,
 	getMessageById,
-	getTimeRemaining
+	getTimeRemaining,
+	getAllContacts
 };

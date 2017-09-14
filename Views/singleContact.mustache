@@ -3,6 +3,7 @@
   <img href="{{avatar}}">
     <h1>All Contact Information</h1>
   <a href="/logout"><button>Logout</button></a>
+  <a href="/inbox"><button>Back to Inbox</button></a>  
 </div>
 <div class="bottom-section">
   <div class="left">
@@ -10,12 +11,12 @@
     <br>
   </div>
   <div class="right">
-    {{^users}}
+    {{^allUsers}}
     <h4>You have no contacts at this time! Click add new contact to add one.</h4>
-    {{/users}}
-    {{#users}}
-      {{>_message}}
-    {{/users}}
+    {{/allUsers}}
+    {{#allUsers}}
+      <h2>Username: {{username}}</h2>
+    {{/allUsers}}
     <p>Copyright SEC Services 2017</p>
   </div>
 
