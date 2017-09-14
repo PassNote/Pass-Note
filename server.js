@@ -15,7 +15,8 @@ const {
 	sendMessage,
 	deleteMessage,
 	getMessageById,
-	getTimeRemaining
+	getTimeRemaining,
+	getAllContacts
 } = require("./dal");
 
 app.engine("mustache", mustacheExpress());
@@ -181,6 +182,22 @@ app.get("/logout", (req, res) => {
 	req.session.destroy();
 	res.redirect("/login");
 });
+
+app.get("/contacts", (req, res) => {
+	if (!req.session.user) res.redirect("/login");
+	const userContacts = getAllContacts().then(function(allUsers){
+		res.render('singleContact', { allUsers })			
+	})
+})
+
+app.get("/addcontact", (req, res) => {
+	res.render('addcontact')	
+})
+
+app.post("/addcontact", (req, res) => {
+	addContact(req.body)
+	res.redirect('/inbox')
+})
 
 app.set("port", 3000);
 

@@ -1,0 +1,14 @@
+
+{{>_header}}
+{{#alert}}
+<h3>{{alert}}</h3>
+{{/alert}}
+  <form class="signup" action="/addcontact" method="POST">
+    <input type="text" name="name" value="" placeholder="Name" required autofocus>
+    <br>
+    <input type="text" name="username" value="" placeholder="Username" required>
+    <br>
+    <button type="submit" name="button">Submit</button>
+  </form>
+  <a href = "http://localhost:3000/inbox"><button>Return to home page!</button></a>  
+{{>_footer}}
